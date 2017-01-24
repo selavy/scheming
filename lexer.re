@@ -104,9 +104,16 @@ static bool scanner_lex(struct scanner_t *scanner) {
                 if (!lex_integer(scanner->token, scanner->cur, &result)) {
                     return false;
                 }
-                printf("Parsed integer: %d", result);
-                return true;
+                printf("Parsed integer: %d\n", result);
+                //return true;
+                continue;
             }
+
+            // whitespaces
+            mcm = "|#" ([^#] | ("#" [^|]))* "#""|";
+            scm = ";" [^\n]* "\n";
+            wsp = ([ \t\v\n\r] | scm | mcm)+;
+            wsp { continue; }
 
         */
     }
