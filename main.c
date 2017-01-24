@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "lexer.c"
+#include "lexer.h"
 
 int main(int argc, char **argv) {
     FILE *fp = fopen("tests.txt", "r");
@@ -15,9 +15,9 @@ int main(int argc, char **argv) {
     }
 
     if (!scanner_lex(&scanner)) {
-        printf("lexing failed!\n");
+        printf("\nlexing failed!\n");
     } else {
-        printf("success!\n");
+        printf("\nsuccess!\n");
     }
 
     if (!scanner_destroy(&scanner)) {

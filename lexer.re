@@ -18,7 +18,7 @@ struct scanner_t {
     bool eof;
 };
 
-int scanner_create(struct scanner_t *scanner, FILE *fp) {
+bool scanner_create(struct scanner_t *scanner, FILE *fp) {
     assert(scanner);
     assert(fp);
 
@@ -30,11 +30,11 @@ int scanner_create(struct scanner_t *scanner, FILE *fp) {
     scanner->token = scanner->limit;
     scanner->eof = false;
 
-    return 0;
+    return true;
 }
 
-int scanner_destroy(struct scanner_t *scanner) {
-    return 0;
+bool scanner_destroy(struct scanner_t *scanner) {
+    return true;
 }
 
 bool scanner_fill(struct scanner_t *scanner, size_t need) {
