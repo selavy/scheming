@@ -110,7 +110,7 @@ static bool scanner_lex(struct scanner_t *scanner) {
             }
 
             // whitespaces
-            mcm = "|#" ([^#] | ("#" [^|]))* "#""|";
+            mcm = "#|" ([^#] | ("|" [^#]))* "|""#";
             scm = ";" [^\n]* "\n";
             wsp = ([ \t\v\n\r] | scm | mcm)+;
             wsp { continue; }
