@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <string.h>
 #include <stdbool.h>
+#include <assert.h>
 
 /*!max:re2c*/
-static const size_t SIZE = 64 * 1024;
+#define SIZE (64 * 1024)
 
 struct scanner_t {
     uint8_t buffer[SIZE + YYMAXFILL];
@@ -23,7 +24,7 @@ int scanner_create(struct scanner_t *scanner, FILE *fp) {
 
     scanner->fp = fp;
     memset(&scanner->buffer[0], 0, sizeof(scanner->buffer));
-    scanner->limit = &buffer[SIZE];
+    scanner->limit = &scanner->buffer[SIZE];
     scanner->cur = scanner->limit;
     scanner->marker = scanner->limit;
     scanner->token = scanner->limit;
@@ -62,4 +63,51 @@ bool scanner_fill(struct scanner_t *scanner, size_t need) {
         scanner->limit += YYMAXFILL;
     }
     return true;
+}
+
+/*!re2c re2c:define:YYCTYPE = "unsigned char"; */
+
+static bool lex_integer(const uint8_t *const begin, const uint8_t *const end, int *val) {
+    char c;
+    int result = 0;
+    for (const uint8_t *cur = begin; cur < end; ++cur) {
+        c = *cur;
+        result *= 10;
+        if (c < '0' || c > '9') {
+            return false;
+        }
+        result += *cur - '0';
+    }
+    *val = result;
+    return true;
+}
+
+static bool scanner_lex(struct scanner_t *scanner) {
+    for (;;) {
+        scanner->token = scanner->cur;
+        /*!re2c
+            re2c:define:YYCURSOR = scanner->cur;
+            re2c:define:YYMARKER = scanner->marker;
+            re2c:define:YYLIMIT = scanner->limit;
+            re2c:yyfill:enable = 1;
+            re2c:define:YYFILL = "if (!scanner_fill(scanner, @@)) return false;";
+            re2c:define:YYFILL:naked = 1;
+
+			end = "\x00";
+
+            *   { return false; }
+            end { return scanner->limit - scanner->token == YYMAXFILL; }
+
+            integer = [0-9][0-9]+;
+            integer {
+                int result;
+                if (!lex_integer(scanner->token, scanner->cur, &result)) {
+                    return false;
+                }
+                printf("Parsed integer: %d", result);
+                return true;
+            }
+
+        */
+    }
 }
