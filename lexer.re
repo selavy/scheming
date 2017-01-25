@@ -104,7 +104,7 @@ static bool scanner_lex(struct scanner_t *scanner) {
                 if (!lex_integer(scanner->token, scanner->cur, &result)) {
                     return false;
                 }
-                printf("Parsed integer: %d\n", result);
+                printf("INTEGER(%d)\n", result);
                 //return true;
                 continue;
             }
@@ -115,6 +115,13 @@ static bool scanner_lex(struct scanner_t *scanner) {
             wsp = ([ \t\v\n\r] | scm | mcm)+;
             wsp { continue; }
 
+            "#t" | "#T" { printf("BOOLEAN(TRUE)\n"); continue; }
+            "#f" | "#F" { printf("BOOLEAN(FALSE)\n"); continue; }
+
+            "(" { printf("LPAREN\n"); continue; }
+            ")" { printf("RPAREN\n"); continue; }
+            "+" { printf("PLUS\n"); continue; }
+            "-" { printf("MINUS\n"); continue; }
         */
     }
 }
