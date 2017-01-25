@@ -1,4 +1,7 @@
-%include {#include <stdint.h>}
+%include {
+#include <stdint.h>
+#include <assert.h>
+}
 
 %parse_accept {
     printf("parsing succeeded!\n");

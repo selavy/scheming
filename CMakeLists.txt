@@ -8,6 +8,7 @@ add_compile_options("-Wall")
 add_compile_options("-Werror")
 add_compile_options("--std=c11")
 
+# generate the lexer with re2c
 add_custom_command(
     PRE_BUILD
     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/lexer.h
@@ -19,7 +20,17 @@ add_executable(lemon
     lemon.c
     )
 
+# generate the parser with lemon
+add_custom_command(
+    PRE_BUILD
+    OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/gram.h ${CMAKE_CURRENT_SOURCE_DIR}/gram.c
+    COMMAND ${CMAKE_CURRENT_BINARY_DIR}/lemon -T${CMAKE_CURRENT_SOURCE_DIR}/lempar.c ${CMAKE_CURRENT_SOURCE_DIR}/gram.y
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lemon ${CMAKE_CURRENT_SOURCE_DIR}/gram.y
+    )
+
 add_executable(little-schemer
     main.c
     lexer.h
+    gram.c
+    gram.h
     )
