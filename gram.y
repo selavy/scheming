@@ -26,9 +26,12 @@
 // %token_type {Token*}
 // %type expr {Expr*}
 
-%left PLUS.
+%left PLUS MINUS DIVIDE MULTIPLY.
 
 program ::= expr.
 
 expr ::= expr PLUS expr. { printf("Doing addition\n"); }
+expr ::= expr MINUS expr. { printf("Doing subtraction\n"); }
+expr ::= expr DIVIDE expr. { printf("Doing division\n"); }
+expr ::= expr MULTIPLY expr. { printf("Doing multiplication\n"); }
 expr ::= INTEGER(A). { printf("Matched integer: %d\n", A); }

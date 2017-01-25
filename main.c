@@ -34,6 +34,11 @@ int main(int argc, char **argv) {
     Parse(parser, TK_INTEGER, 14);
     Parse(parser, 0, 0);
 
+    Parse(parser, TK_INTEGER, 15);
+    Parse(parser, TK_MINUS, 0);
+    Parse(parser, TK_INTEGER, 14);
+    Parse(parser, 0, 0);
+
     ParseFree(parser, free);
 
     return 0;

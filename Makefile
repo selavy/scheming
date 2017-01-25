@@ -5,4 +5,4 @@ build:
 
 .PHONY: clean
 clean:
-	rm gram.c gram.h
+	rm gram.c gram.h gram.out
