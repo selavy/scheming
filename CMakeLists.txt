@@ -15,6 +15,10 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/lexer.re
     )
 
+add_executable(lemon
+    lemon.c
+    )
+
 add_executable(little-schemer
     main.c
     lexer.h
