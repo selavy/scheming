@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "lexer.h"
+#include "gram.h"
+#include "gram.c"
 
 int main(int argc, char **argv) {
     FILE *fp = fopen("tests.txt", "r");
@@ -24,5 +26,15 @@ int main(int argc, char **argv) {
         fputs("Failed to destroy scanner\n", stderr);
         exit(EXIT_FAILURE);
     }
+
+    void *parser = ParseAlloc(malloc);
+
+    Parse(parser, TK_INTEGER, 15);
+    Parse(parser, TK_PLUS, 0);
+    Parse(parser, TK_INTEGER, 14);
+    Parse(parser, 0, 0);
+
+    ParseFree(parser, free);
+
     return 0;
 }

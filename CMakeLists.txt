@@ -31,6 +31,5 @@ add_custom_command(
 add_executable(little-schemer
     main.c
     lexer.h
-    gram.c
     gram.h
     )
