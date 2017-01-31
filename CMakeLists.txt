@@ -17,7 +17,7 @@ add_custom_command(
     )
 
 add_executable(lemon
-    lemon.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools/lemon.c
     )
 
 # generate the parser with lemon
