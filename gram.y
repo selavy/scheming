@@ -21,6 +21,8 @@
 
 %token_prefix TK_
 
+%name schemeParser
+
 // TODO(plesslie)
 %token_type {int}
 // %token_type {Token*}

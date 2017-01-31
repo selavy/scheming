@@ -26,20 +26,19 @@ int main(int argc, char **argv) {
         fputs("Failed to destroy scanner\n", stderr);
         exit(EXIT_FAILURE);
     }
+    void *parser = schemeParserAlloc(malloc);
 
-    void *parser = ParseAlloc(malloc);
+    schemeParser(parser, TK_INTEGER, 15);
+    schemeParser(parser, TK_PLUS, 0);
+    schemeParser(parser, TK_INTEGER, 14);
+    schemeParser(parser, 0, 0);
 
-    Parse(parser, TK_INTEGER, 15);
-    Parse(parser, TK_PLUS, 0);
-    Parse(parser, TK_INTEGER, 14);
-    Parse(parser, 0, 0);
+    schemeParser(parser, TK_INTEGER, 15);
+    schemeParser(parser, TK_MINUS, 0);
+    schemeParser(parser, TK_INTEGER, 14);
+    schemeParser(parser, 0, 0);
 
-    Parse(parser, TK_INTEGER, 15);
-    Parse(parser, TK_MINUS, 0);
-    Parse(parser, TK_INTEGER, 14);
-    Parse(parser, 0, 0);
-
-    ParseFree(parser, free);
+    schemeParserFree(parser, free);
 
     return 0;
 }
