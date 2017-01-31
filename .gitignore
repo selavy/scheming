@@ -34,3 +34,5 @@
 
 build/
 lexer.h
+gram.c
+gram.h

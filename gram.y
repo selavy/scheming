@@ -1,6 +1,13 @@
 %include {
 #include <stdint.h>
 #include <assert.h>
+
+struct Parse {
+    // TODO(plesslie): hold result of a parse
+    int dummy;
+};
+typedef struct Parse Parse;
+
 }
 
 %parse_accept {
@@ -23,6 +30,10 @@
 
 %name schemeParser
 
+%extra_argument {Parse* parse}
+// TODO(plesslie): just to silence a warning about unused variable
+%token_destructor { parse->dummy = 1; }
+
 // TODO(plesslie)
 %token_type {int}
 // %token_type {Token*}
@@ -32,7 +43,7 @@
 
 program ::= expr.
 
-expr ::= expr PLUS expr. { printf("Doing addition\n"); }
+expr ::= expr PLUS expr. { printf("Doing addition\n"); parse->dummy = 1; }
 expr ::= expr MINUS expr. { printf("Doing subtraction\n"); }
 expr ::= expr DIVIDE expr. { printf("Doing division\n"); }
 expr ::= expr MULTIPLY expr. { printf("Doing multiplication\n"); }

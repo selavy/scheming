@@ -27,16 +27,19 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     void *parser = schemeParserAlloc(malloc);
+    Parse ast;
 
-    schemeParser(parser, TK_INTEGER, 15);
-    schemeParser(parser, TK_PLUS, 0);
-    schemeParser(parser, TK_INTEGER, 14);
-    schemeParser(parser, 0, 0);
+    schemeParser(parser, TK_INTEGER, 15, &ast);
+    schemeParser(parser, TK_PLUS, 0, &ast);
+    schemeParser(parser, TK_INTEGER, 14, &ast);
+    schemeParser(parser, 0, 0, &ast);
 
+#if 0
     schemeParser(parser, TK_INTEGER, 15);
     schemeParser(parser, TK_MINUS, 0);
     schemeParser(parser, TK_INTEGER, 14);
     schemeParser(parser, 0, 0);
+#endif
 
     schemeParserFree(parser, free);
 
