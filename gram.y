@@ -8,7 +8,7 @@ struct ParseTree {
 };
 //typedef struct ParseTree ParseTree;
 
-struct TokenType {
+struct Token {
     int value;
 };
 
@@ -38,9 +38,8 @@ struct TokenType {
 // TODO(plesslie): just to silence a warning about unused variable
 %token_destructor { parse->dummy = 1; }
 
-// TODO(plesslie)
-%token_type {int}
-// %token_type {Token*}
+//%token_type {int}
+%token_type {struct Token*}
 // %type expr {Expr*}
 
 %left PLUS MINUS DIVIDE MULTIPLY.
@@ -51,4 +50,4 @@ expr ::= expr PLUS expr. { printf("Doing addition\n"); parse->dummy = 1; }
 expr ::= expr MINUS expr. { printf("Doing subtraction\n"); }
 expr ::= expr DIVIDE expr. { printf("Doing division\n"); }
 expr ::= expr MULTIPLY expr. { printf("Doing multiplication\n"); }
-expr ::= INTEGER(A). { printf("Matched integer: %d\n", A); }
+expr ::= INTEGER(A). { printf("Matched integer: %d\n", A->value); }

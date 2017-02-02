@@ -29,9 +29,11 @@ int main(int argc, char **argv) {
     void *parser = schemeParserAlloc(malloc);
     struct ParseTree ast;
 
-    schemeParser(parser, TK_INTEGER, 15, &ast);
-    schemeParser(parser, TK_PLUS, 0, &ast);
-    schemeParser(parser, TK_INTEGER, 14, &ast);
+    struct Token token;
+    token.value = 15;
+    schemeParser(parser, TK_INTEGER, &token, &ast);
+    schemeParser(parser, TK_PLUS, &token, &ast);
+    schemeParser(parser, TK_INTEGER, &token, &ast);
     schemeParser(parser, 0, 0, &ast);
 
 #if 0
