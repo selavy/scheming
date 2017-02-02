@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     void *parser = schemeParserAlloc(malloc);
-    Parse ast;
+    struct ParseTree ast;
 
     schemeParser(parser, TK_INTEGER, 15, &ast);
     schemeParser(parser, TK_PLUS, 0, &ast);

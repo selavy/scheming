@@ -2,11 +2,15 @@
 #include <stdint.h>
 #include <assert.h>
 
-struct Parse {
+struct ParseTree {
     // TODO(plesslie): hold result of a parse
     int dummy;
 };
-typedef struct Parse Parse;
+//typedef struct ParseTree ParseTree;
+
+struct TokenType {
+    int value;
+};
 
 }
 
@@ -30,7 +34,7 @@ typedef struct Parse Parse;
 
 %name schemeParser
 
-%extra_argument {Parse* parse}
+%extra_argument {struct ParseTree* parse}
 // TODO(plesslie): just to silence a warning about unused variable
 %token_destructor { parse->dummy = 1; }
 
