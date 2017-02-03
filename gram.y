@@ -75,7 +75,7 @@ constant ::= NUMBER(N). {
 
     // TODO(plesslie): other numerical reprs
     assert(begin != 0);
-    assert(begin > end);
+    assert(end > begin);
     //parse->nval = sm_strtod(begin, end);
 
     char *buf = strndup(begin, end - begin);
