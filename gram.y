@@ -7,12 +7,19 @@
 
 typedef void SchemeParser;
 
+enum OperatorType {
+    OP_PLUS,
+    OP_UNKNOWN
+};
+typedef enum OperatorType OperatorType;
+
 enum NodeType {
     // Literal Types
     AST_BOOLEAN,
     AST_NUMBER,
     AST_CHARACTER,
     AST_STRING,
+    AST_OPERATOR,
     AST_UNKNOWN
 };
 typedef enum NodeType NodeType;
@@ -48,6 +55,9 @@ struct ParseTree {
         double nval;
         String sval;
     } u;
+
+    struct ParseTree *l;
+    struct ParseTree *r;
 
     int dummy; // TODO(plesslie): remove
 };
@@ -91,7 +101,29 @@ typedef struct Token Token;
 
 %extra_argument {struct ParseTree* parse}
 
-%token_type {struct Token*}
+%token_type {const Token*}
+
+program ::= expression.
+
+expression ::= literal.
+
+expression ::= LPAREN operator literal literal RPAREN. {
+    printf("WOOT\n");
+}
+
+operator ::= PLUS. {
+    parse->kind = AST_OPERATOR;
+    parse->u.s.info = OP_PLUS;
+}
+
+//------------------------------------------------------------------------------
+// Datum
+//------------------------------------------------------------------------------
+//datum ::= literal.
+
+//------------------------------------------------------------------------------
+// Literal (constant) Values
+//------------------------------------------------------------------------------
 
 literal ::= STRING(C). {
     const char *restrict const begin = C->begin;
