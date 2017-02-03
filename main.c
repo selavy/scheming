@@ -9,37 +9,45 @@ BeforeEach(Parser) {}
 AfterEach(Parser) {}
 
 Ensure(Parser, boolean_is_constant) {
+    const char *restrict const data = "#t";
+    const size_t len = strlen(data);
+
     ParseTree ast;
-    Token token;
+    Token token = { .begin=data, .end=data + len };
     SchemeParser *parser = schemeParserAlloc(malloc);
 
-    ast.type = AST_UNKNOWN;
+    ast.kind = AST_UNKNOWN;
     g_parse_accepted = 0;
-    token.value = 0;
 
     schemeParser(parser, TK_BOOLEAN, &token, &ast);
     schemeParser(parser, 0, 0, &ast);
 
     schemeParserFree(parser, free);
-    assert_that(g_parse_accepted == 1);
-    assert_that(ast.type == AST_BOOLEAN);
+
+    assert_that(g_parse_accepted, is_equal_to(1));
+    assert_that(ast.kind, is_equal_to(AST_BOOLEAN));
+    assert_that_double(ast.nval, is_equal_to_double(1.0));
 }
 
 Ensure(Parser, number_is_constant) {
+    const char *restrict const data = "1234";
+    const size_t len = strlen(data);
+
     ParseTree ast;
-    Token token;
+    Token token = { .begin=data, . end=data + len };
     SchemeParser *parser = schemeParserAlloc(malloc);
 
-    ast.type = AST_UNKNOWN;
+    ast.kind = AST_UNKNOWN;
     g_parse_accepted = 0;
-    token.value = 0;
 
     schemeParser(parser, TK_NUMBER, &token, &ast);
     schemeParser(parser, 0, 0, &ast);
 
     schemeParserFree(parser, free);
-    assert_that(g_parse_accepted == 1);
-    assert_that(ast.type == AST_NUMBER);
+
+    assert_that(g_parse_accepted, is_equal_to(1));
+    assert_that(ast.kind, is_equal_to(AST_NUMBER));
+    assert_that_double(ast.nval, is_equal_to_double(1234.0));
 }
 
 int main(int argc, char **argv) {

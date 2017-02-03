@@ -9,7 +9,7 @@ include_directories(${CGREEN_INCLUDE_DIRS})
 
 add_compile_options("-Wall")
 add_compile_options("-Werror")
-add_compile_options("--std=c11")
+add_compile_options("--std=gnu11")
 add_compile_options("-Wno-unused-function")
 add_compile_options("-Wno-unused-variable")
 
