@@ -10,13 +10,20 @@ typedef void SchemeParser;
 enum NodeType {
     AST_BOOLEAN,
     AST_NUMBER,
+    AST_CHARACTER,
     AST_UNKNOWN
 };
 typedef enum NodeType NodeType;
 
 struct ParseTree {
     NodeType kind;
-    double   nval;
+    union {
+        struct {
+            uint32_t info;
+            uint32_t aux;
+        } s;
+        double   nval;
+    } u;
 
     int dummy; // TODO(plesslie): remove
 };
@@ -62,10 +69,20 @@ typedef struct Token Token;
 
 %token_type {struct Token*}
 
+constant ::= CHARACTER(C). {
+    const char *restrict const begin = C->begin;
+    const char *restrict const end = C->end;
+    parse->kind = AST_CHARACTER;
+    // TODO(plesslie): extremely naive, need to support unicode
+    // assuming form "#\A", where A is any ASCII character
+    assert(end - begin == 3);
+    parse->u.s.info = begin[2];
+}
+
 constant ::= BOOLEAN(B). {
     parse->kind = AST_BOOLEAN;
     assert(B->end - B->begin == 2);
-    parse->nval = (B->begin[1] == 't' || B->begin[1] == 'T') ? 1.0 : 0.0;
+    parse->u.nval = (B->begin[1] == 't' || B->begin[1] == 'T') ? 1.0 : 0.0;
 }
 
 constant ::= NUMBER(N). {
@@ -76,9 +93,9 @@ constant ::= NUMBER(N). {
     // TODO(plesslie): other numerical reprs
     assert(begin != 0);
     assert(end > begin);
-    //parse->nval = sm_strtod(begin, end);
+    //parse->u.nval = sm_strtod(begin, end);
 
     char *buf = strndup(begin, end - begin);
-    parse->nval = atof(buf);
+    parse->u.nval = atof(buf);
     free(buf);
 }

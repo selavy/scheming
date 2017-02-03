@@ -26,7 +26,7 @@ Ensure(Parser, parse_boolean_true_lowercase) {
 
     assert_that(g_parse_accepted, is_equal_to(1));
     assert_that(ast.kind, is_equal_to(AST_BOOLEAN));
-    assert_that_double(ast.nval, is_equal_to_double(1.0));
+    assert_that_double(ast.u.nval, is_equal_to_double(1.0));
 }
 
 Ensure(Parser, parse_boolean_true_uppercase) {
@@ -47,7 +47,7 @@ Ensure(Parser, parse_boolean_true_uppercase) {
 
     assert_that(g_parse_accepted, is_equal_to(1));
     assert_that(ast.kind, is_equal_to(AST_BOOLEAN));
-    assert_that_double(ast.nval, is_equal_to_double(1.0));
+    assert_that_double(ast.u.nval, is_equal_to_double(1.0));
 }
 
 Ensure(Parser, parse_boolean_false_lowercase) {
@@ -68,7 +68,7 @@ Ensure(Parser, parse_boolean_false_lowercase) {
 
     assert_that(g_parse_accepted, is_equal_to(1));
     assert_that(ast.kind, is_equal_to(AST_BOOLEAN));
-    assert_that_double(ast.nval, is_equal_to_double(0.0));
+    assert_that_double(ast.u.nval, is_equal_to_double(0.0));
 }
 
 Ensure(Parser, parse_boolean_false_uppercase) {
@@ -89,8 +89,9 @@ Ensure(Parser, parse_boolean_false_uppercase) {
 
     assert_that(g_parse_accepted, is_equal_to(1));
     assert_that(ast.kind, is_equal_to(AST_BOOLEAN));
-    assert_that_double(ast.nval, is_equal_to_double(0.0));
+    assert_that_double(ast.u.nval, is_equal_to_double(0.0));
 }
+
 Ensure(Parser, parse_number) {
     const char *restrict const data = "1234";
     const size_t len = strlen(data);
@@ -109,7 +110,49 @@ Ensure(Parser, parse_number) {
 
     assert_that(g_parse_accepted, is_equal_to(1));
     assert_that(ast.kind, is_equal_to(AST_NUMBER));
-    assert_that_double(ast.nval, is_equal_to_double(1234.0));
+    assert_that_double(ast.u.nval, is_equal_to_double(1234.0));
+}
+
+Ensure(Parser, parse_fraction) {
+    const char *restrict const data = "0.1111";
+    const size_t len = strlen(data);
+
+    ParseTree ast;
+    Token token = { .begin=data, .end=data+len };
+    SchemeParser *parser = schemeParserAlloc(malloc);
+
+    ast.kind = AST_UNKNOWN;
+    g_parse_accepted = 0;
+
+    schemeParser(parser, TK_NUMBER, &token, &ast);
+    schemeParser(parser, 0, 0, &ast);
+
+    schemeParserFree(parser, free);
+
+    assert_that(g_parse_accepted, is_equal_to(1));
+    assert_that(ast.kind, is_equal_to(AST_NUMBER));
+    assert_that_double(ast.u.nval, is_equal_to_double(0.1111));
+}
+
+Ensure(Parser, parse_character) {
+    const char *restrict const data = "#\\A";
+    const size_t len = strlen(data);
+
+    ParseTree ast;
+    Token token = { .begin=data, .end=data+len };
+    SchemeParser *parser = schemeParserAlloc(malloc);
+
+    ast.kind = AST_UNKNOWN;
+    g_parse_accepted = 0;
+
+    schemeParser(parser, TK_CHARACTER, &token, &ast);
+    schemeParser(parser, 0, 0, &ast);
+
+    schemeParserFree(parser, free);
+
+    assert_that(g_parse_accepted, is_equal_to(1));
+    assert_that(ast.kind, is_equal_to(AST_CHARACTER));
+    assert_that(ast.u.s.info, is_equal_to('A'));
 }
 
 int main(int argc, char **argv) {
@@ -119,6 +162,8 @@ int main(int argc, char **argv) {
     add_test_with_context(suite, Parser, parse_boolean_false_lowercase);
     add_test_with_context(suite, Parser, parse_boolean_false_uppercase);
     add_test_with_context(suite, Parser, parse_number);
+    add_test_with_context(suite, Parser, parse_fraction);
+    add_test_with_context(suite, Parser, parse_character);
     return run_test_suite(suite, create_text_reporter());
 }
 
