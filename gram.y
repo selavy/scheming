@@ -8,12 +8,35 @@
 typedef void SchemeParser;
 
 enum NodeType {
+    // Literal Types
     AST_BOOLEAN,
     AST_NUMBER,
     AST_CHARACTER,
+    AST_STRING,
     AST_UNKNOWN
 };
 typedef enum NodeType NodeType;
+
+// TODO(plesslie):
+struct String {
+    char *begin;
+    char *end;
+};
+typedef struct String String;
+
+int String_create(const char *restrict const begin,
+                   const char *restrict const end,
+                   String *str) {
+    assert(str);
+    assert(end - begin > 0);
+    const size_t size = end - begin;
+    str->begin = malloc(size);
+    // TODO(plesslie): handle malloc fail
+    assert(str->begin);
+    str->end = str->begin + size;
+    memcpy(str->begin, begin, size);
+    return 0;
+}
 
 struct ParseTree {
     NodeType kind;
@@ -22,7 +45,8 @@ struct ParseTree {
             uint32_t info;
             uint32_t aux;
         } s;
-        double   nval;
+        double nval;
+        String sval;
     } u;
 
     int dummy; // TODO(plesslie): remove
@@ -69,23 +93,35 @@ typedef struct Token Token;
 
 %token_type {struct Token*}
 
-constant ::= CHARACTER(C). {
+literal ::= STRING(C). {
+    const char *restrict const begin = C->begin;
+    const char *restrict const end = C->end;
+    parse->kind = AST_STRING;
+    // TODO(plesslie): support unicode
+    assert(end - begin >= 2);
+    // REVISIT(plesslie): lexer strip double-quotes
+    const int rval = String_create(begin + 1, end - 1, &parse->u.sval);
+    assert(rval == 0);
+}
+
+literal ::= CHARACTER(C). {
     const char *restrict const begin = C->begin;
     const char *restrict const end = C->end;
     parse->kind = AST_CHARACTER;
     // TODO(plesslie): extremely naive, need to support unicode
     // assuming form "#\A", where A is any ASCII character
     assert(end - begin == 3);
+    // REVISIT(plesslie): lexer strip prefix?
     parse->u.s.info = begin[2];
 }
 
-constant ::= BOOLEAN(B). {
+literal ::= BOOLEAN(B). {
     parse->kind = AST_BOOLEAN;
     assert(B->end - B->begin == 2);
     parse->u.nval = (B->begin[1] == 't' || B->begin[1] == 'T') ? 1.0 : 0.0;
 }
 
-constant ::= NUMBER(N). {
+literal ::= NUMBER(N). {
     const char *restrict begin = N->begin;
     const char *restrict end = N->end;
     parse->kind = AST_NUMBER;

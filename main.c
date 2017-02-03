@@ -155,6 +155,28 @@ Ensure(Parser, parse_character) {
     assert_that(ast.u.s.info, is_equal_to('A'));
 }
 
+Ensure(Parser, parse_string) {
+    const char *restrict const data = "\"Hello World\"";
+    const size_t len = strlen(data);
+
+    ParseTree ast;
+    Token token = { .begin=data, .end=data+len };
+    SchemeParser *parser = schemeParserAlloc(malloc);
+
+    ast.kind = AST_UNKNOWN;
+    g_parse_accepted = 0;
+
+    schemeParser(parser, TK_STRING, &token, &ast);
+    schemeParser(parser, 0, 0, &ast);
+
+    schemeParserFree(parser, free);
+
+    assert_that(g_parse_accepted, is_equal_to(1));
+    assert_that(ast.kind, is_equal_to(AST_STRING));
+    const char *expected = "Hello World";
+    assert_that(ast.u.sval.begin, is_equal_to_contents_of(expected, strlen(expected)));
+}
+
 int main(int argc, char **argv) {
     TestSuite *suite = create_test_suite();
     add_test_with_context(suite, Parser, parse_boolean_true_lowercase);
@@ -164,6 +186,7 @@ int main(int argc, char **argv) {
     add_test_with_context(suite, Parser, parse_number);
     add_test_with_context(suite, Parser, parse_fraction);
     add_test_with_context(suite, Parser, parse_character);
+    add_test_with_context(suite, Parser, parse_string);
     return run_test_suite(suite, create_text_reporter());
 }
 
